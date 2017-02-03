@@ -4,6 +4,7 @@
   "description": "\"scrapper que je vais développer pour recuperer des tableaux sur une page wikipedia\"",
   "main": "index.js",
   "scripts": {
+    "web": "bundle exec thin start -p $PORT",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
