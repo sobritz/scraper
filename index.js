@@ -134,7 +134,7 @@ app.get('/navals', function(req, res){
 
 app.get('/', function(req, res) {
 
-    res.json({"route": "navals"});
+    res.send("<h1>yo !</h1>");
 
 });
 
