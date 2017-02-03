@@ -11,6 +11,9 @@
   "keywords": [
     "scrapper"
   ],
+  "engines": {
+    "node": "7.5.0"
+  },
   "author": "julien",
   "license": "ISC",
   "dependencies": {
