@@ -1,31 +1,34 @@
-/**
- * Created by stagiaire on 02/02/2017.
- */
+
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
-var himalaya = require('himalaya');
 var tabletojson = require('tabletojson');
 
 var app     = express();
+var router = express.Router();
 
-function myStringify(key, value) {
-    if (typeof value === 'object' && value != null) {
-        return (JSON.stringify(value, myStringify(key, value)));
-    }
-    else {
-        return value;
-    }
+function isAuthenticated(req, res, next) {
+
+    if (req.get("Authorization") == "acs")
+
+        return next();
+
+    
+    res.redirect('/');
 }
+
+
+
+
 
 url = 'https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France';
 
-app.get('/stoped', function(req, res){
+router.get('/stoped', function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[0]);
             });
 
@@ -34,12 +37,12 @@ app.get('/stoped', function(req, res){
 
 })
 
-app.get('/activ', function(req, res){
+router.get('/activ', isAuthenticated, function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[1]);
             });
 
@@ -48,12 +51,12 @@ app.get('/activ', function(req, res){
 
 })
 
-app.get('/building', function(req, res){
+router.get('/building', isAuthenticated, function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[2]);
             });
 
@@ -62,12 +65,12 @@ app.get('/building', function(req, res){
 
 })
 
-app.get('/abort', function(req, res){
+router.get('/abort', isAuthenticated, function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[3]);
             });
 
@@ -76,12 +79,12 @@ app.get('/abort', function(req, res){
 
 })
 
-app.get('/finnalystoped', function(req, res){
+router.get('/finnalystoped',  isAuthenticated, function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[4]);
             });
 
@@ -90,12 +93,12 @@ app.get('/finnalystoped', function(req, res){
 
 })
 
-app.get('/searchactiv', function(req, res){
+router.get('/searchactiv',  isAuthenticated, function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[5]);
             });
 
@@ -104,12 +107,12 @@ app.get('/searchactiv', function(req, res){
 
 })
 
-app.get('/searchproject', function(req, res){
+router.get('/searchproject', isAuthenticated, function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[6]);
             });
 
@@ -118,12 +121,12 @@ app.get('/searchproject', function(req, res){
 
 })
 
-app.get('/navals', function(req, res){
+router.get('/navals', isAuthenticated, function(req, res){
     request(url, function(error, response, html){
 
         if(!error){
 
-            tabletojson.convertUrl('https://fr.wikipedia.org/wiki/Liste_des_r%C3%A9acteurs_nucl%C3%A9aires_en_France', function(tablesAsJson) {
+            tabletojson.convertUrl(url, function(tablesAsJson) {
                 res.json(tablesAsJson[7]);
             });
 
@@ -134,9 +137,26 @@ app.get('/navals', function(req, res){
 
 app.get('/', function(req, res) {
 
-    res.send("<h1>yo !</h1>");
+    var doc = {
+        "message": "Bienvenue sur la doc api",
+        "routes": {
+            "api/activ": "b",
+            "api/stoped": "d",
+            "api/building": "f",
+            "api/abort": "f",
+            "api/finnalystoped": "f",
+            "api/searchactiv": "f",
+            "api/navals": "f"
+        }
+}
+
+    res.json(doc);
 
 });
+
+app.use('/api', router);
+
+
 
 app.listen('8081')
 console.log('Magic happens on port 8081');
