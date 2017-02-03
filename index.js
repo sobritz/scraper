@@ -132,6 +132,11 @@ app.get('/navals', function(req, res){
 
 })
 
+app.get('/', function(req, res) {
+
+    res.json({"route": "navals"});
+
+});
 
 app.listen('8081')
 console.log('Magic happens on port 8081');
